@@ -13,7 +13,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: null,
       body: Center(
-        child: Text('Home Screenaaaa'),
+        child: Text('Home Screen'),
       ),
     );
   }
