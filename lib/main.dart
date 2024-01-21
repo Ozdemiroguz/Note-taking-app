@@ -1,3 +1,4 @@
+import 'package:firstvisual/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:firstvisual/screens/signin_screen.dart';
 import 'package:firstvisual/screens/bottom_navigation_screen.dart';
@@ -11,8 +12,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Uygulama',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: AppColors.softBack,
+        canvasColor: Colors.transparent,
       ),
       home: SignInScreen(),
       routes: {
