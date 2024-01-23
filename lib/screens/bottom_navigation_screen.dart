@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:firstvisual/screens/home_screen.dart';
 import 'package:firstvisual/screens/page2.dart';
 import 'package:flutter/material.dart';
@@ -62,11 +60,10 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
               offset: Offset(4, 4),
             ),
           ],
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(15.0),
-            bottomRight: Radius.circular(15.0),
+          borderRadius: BorderRadius.all(
+            Radius.circular(15.0),
           ),
-          color: AppColors.darkBack, // İstediğiniz arkaplan rengini ayarlayın
+          color: AppColors.softBack, // İstediğiniz arkaplan rengini ayarlayın
         ), //BoxDecoration
         child: BottomNavigationBar(
           type: BottomNavigationBarType.shifting,
@@ -89,6 +86,6 @@ BottomNavigationBarItem bottomNavigationBarItem(IconData icon, String label) {
   return BottomNavigationBarItem(
     icon: Icon(icon),
     label: label,
-    backgroundColor: AppColors.darkBack,
+    backgroundColor: AppColors.softBack,
   );
 }

@@ -1,6 +1,11 @@
+import 'package:firstvisual/models/note.dart';
 import 'package:firstvisual/styles/colors.dart';
+import 'package:firstvisual/styles/shape.dart';
 import 'package:firstvisual/styles/textStyle.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:lottie/lottie.dart';
+import 'package:firstvisual/widgets/home_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
@@ -8,6 +13,19 @@ class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
+
+List<int> ticklist = [1, 0, 1];
+bool isChecked = false;
+listNote note = listNote(
+  title: "title",
+  description: "description",
+  date: "date",
+  time: "time",
+  color: "color",
+  id: "id",
+  tickDescp: ["aaaaaaaaaaaa", "baaaaaaaaaaaa", "caaaaaaaaa"],
+  ticklist: [1, 0, 1],
+);
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
@@ -21,45 +39,133 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
         children: [
           // SizedBox(height: 15),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(50),
-                  bottomRight: Radius.circular(50)),
-              //color with opacity
-              color: const Color.fromARGB(255, 8, 123, 144),
+          ClipPath(
+            clipper: BottomClipper(),
+            child: Container(
+              width: width,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10)),
+                color: AppColors.softBack,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Hello Oğuzhan ", style: subTitleStyle),
+                        Text("Good Morning  ", style: titleStyle),
+                        Text("You have xx task today", style: subTitleStyle),
+                      ],
+                    ),
+                    SizedBox(
+                        width: width * 0.25,
+                        child: Lottie.asset(
+                            "animations/Animation - 1705919921302.json")),
+                  ],
+                ),
+              ),
+            ),
+          ),
 
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
-                    blurRadius: 1,
-                    spreadRadius: 1,
-                    offset: Offset(4, 4)),
+          SizedBox(height: 15),
+          Padding(
+            padding: EdgeInsets.all(width * 0.05),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TaskContainer(ListNote: note),
+                TaskContainer(ListNote: note),
               ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Welcome Name Surname", style: titleStyle),
-                  Text(
-                      "Quote of the day:It is during our darkest moments that we must focus to see the light.",
-                      style: subTitleStyle),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text("Notes: 17", style: subTitleStyle),
-                      SizedBox(width: 50),
-                      Text("Done notes :11", style: subTitleStyle),
-                    ],
-                  )
-                ],
-              ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(width * 0.05),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TaskContainer(ListNote: note),
+                TaskContainer(ListNote: note),
+              ],
             ),
           ),
         ],
       )),
+    );
+  }
+}
+
+class MyWidget extends StatefulWidget {
+  @override
+  _MyWidgetState createState() => _MyWidgetState();
+}
+
+class _MyWidgetState extends State<MyWidget> {
+  bool isChecked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return buildContainer(context);
+  }
+
+  Widget buildContainer(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.425,
+      decoration: BoxDecoration(color: Colors.red),
+      child: Stack(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Title task"),
+              Row(
+                children: [
+                  Checkbox(
+                    value: isChecked,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        isChecked = value!;
+                        print(isChecked);
+                      });
+                    },
+                  ),
+                  Expanded(
+                    child: Text(
+                      "dsfgshbfsjfkbfjhsdb",
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontFamily: 'Poppins'),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Checkbox(
+                    value: isChecked,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        isChecked = value!;
+                        print(isChecked);
+                      });
+                    },
+                  ),
+                  Expanded(
+                    child: Text(
+                      "dsfgshbfsjfkbfjhsdb",
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontFamily: 'Poppins'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 }
