@@ -15,34 +15,59 @@ class _TaskContainerState extends State<TaskContainer> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.425,
-      decoration: BoxDecoration(color: Colors.yellow.withOpacity(0.5)),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.ListNote.title,
-              style: TextStyle(fontWeight: FontWeight.bold),
+    return Stack(
+      children: [
+        Container(
+          width: MediaQuery.of(context).size.width * 0.425,
+          decoration: BoxDecoration(color: Colors.yellow.withOpacity(0.5)),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.ListNote.title,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.425,
+                  child: Column(
+                    children: List.generate(
+                      widget.ListNote.tickDescp.length,
+                      (index) =>
+                          buildRow(widget.ListNote.tickDescp[index], index),
+                    ),
+                  ),
+                ),
+                Text(
+                  widget.ListNote.date,
+                  style: TextStyle(fontFamily: 'Poppins'),
+                ),
+              ],
             ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.425,
-              child: Column(
-                children: List.generate(
-                  widget.ListNote.tickDescp.length,
-                  (index) => buildRow(widget.ListNote.tickDescp[index], index),
+          ),
+        ),
+        Positioned(
+            bottom: 0,
+            right: 0,
+            child: ElevatedButton(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  color: Colors.amberAccent,
+                ),
+                width: 30,
+                height: 30,
+                child: Icon(
+                  Icons.arrow_forward,
+                  size: 20,
                 ),
               ),
-            ),
-            Text(
-              widget.ListNote.date,
-              style: TextStyle(fontFamily: 'Poppins'),
-            ),
-          ],
-        ),
-      ),
+              onPressed: () {
+                print("pressed");
+              },
+            ))
+      ],
     );
   }
 
