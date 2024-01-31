@@ -1,4 +1,5 @@
-import 'package:firstvisual/screens/home_screen.dart';
+import 'package:firstvisual/homeScreen/home_screen.dart';
+import 'package:firstvisual/screens/note_screen.dart';
 import 'package:firstvisual/screens/page2.dart';
 import 'package:flutter/material.dart';
 //colors
@@ -17,8 +18,8 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   int _selectedIndex = 0;
   static final List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
+    DrawingScreen(),
     Page2(),
-    Text('Profil'),
   ];
 
   void _onItemTapped(int index) {

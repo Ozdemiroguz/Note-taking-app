@@ -13,7 +13,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Uygulama',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(),
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
+      ),
       home: SignInScreen(),
       routes: {
         '/home': (context) => BottomNavigationBarScreen(),
