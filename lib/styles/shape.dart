@@ -1,35 +1,46 @@
+import 'package:firstvisual/models/note.dart';
+import 'package:intl/intl.dart';
+
 import 'package:flutter/material.dart';
 
-class TopClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    path.lineTo(0, size.height); // Sol alt köşe
-    path.lineTo(size.width, size.height); // Sağ alt köşe
-    path.lineTo(size.width, 30); // Sağ üst köşe
-    path.quadraticBezierTo(size.width / 2, 0, 0, 30); // Orta üst köşe
-    return path;
-  }
+String formatDate(DateTime date) {
+  // Ay isimlerini içeren bir liste
 
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return false;
-  }
+  // Gün, Ay ve Yılı alarak tarihi biçimlendirme
+  String formattedDate = DateFormat('d MMMM h:mm a').format(date);
+  return formattedDate;
 }
 
-class BottomClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    path.lineTo(0, 0); // Sol üst köşe
-    path.quadraticBezierTo(
-        size.width / 2, -size.height, size.width, 0); // Orta alt köşe
-    path.lineTo(size.width, size.height); // Sağ alt köşe
-    path.lineTo(0, size.height); // Sol alt köşe
-    return path;
-  }
+Widget buildRow(Task task) {
+  bool itemsChecked = task.isDone;
+  return Row(
+    children: [
+      Checkbox(
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        value: task.isDone,
+        focusColor: Colors.red,
+        activeColor: Colors.green,
+        onChanged: (bool? value) {},
+      ),
+      Expanded(
+        child: Text(
+          task.task,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 14,
+            decoration: itemsChecked ? TextDecoration.lineThrough : null,
+          ),
+        ),
+      ),
+    ],
+  );
+}
 
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return false;
-  }
+double getWidth(BuildContext context) {
+  return MediaQuery.of(context).size.width;
+}
+
+double getHeight(BuildContext context) {
+  return MediaQuery.of(context).size.height;
 }

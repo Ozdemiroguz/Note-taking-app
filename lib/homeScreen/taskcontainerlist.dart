@@ -1,5 +1,11 @@
+import 'dart:io';
+
 import 'package:firstvisual/models/note.dart';
+import 'package:firstvisual/styles/colors.dart';
+import 'package:firstvisual/styles/dateFormat.dart';
+import 'package:firstvisual/styles/shape.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class TaskContainerList extends StatefulWidget {
   final Note note;
@@ -17,7 +23,7 @@ class _TaskContainerState extends State<TaskContainerList> {
   Widget build(BuildContext context) {
     List<Widget> children = [
       Text(
-        widget.note.date.toIso8601String(),
+        format1(widget.note.date),
         style: taskdateStyle,
       ),
       Text(
@@ -36,76 +42,59 @@ class _TaskContainerState extends State<TaskContainerList> {
         overflow: TextOverflow.ellipsis,
       )
     ];
-    if (widget.note.type == 'TaskList') {
-      print("object");
-      children.add(Expanded(
-        child: Column(
-          // Column'ın boyutlarını dikkatlice ayarlayın
-          children: List.generate(
-            (widget.note as TaskListNote).tasks.length,
-            (index) => buildRow((widget.note as TaskListNote).tasks[index],
-                (widget.note as TaskListNote).ticklist[index]),
+    if (widget.note is DetailedNote &&
+        (widget.note as DetailedNote).imgPaths.length > 0) {
+      children.add(SizedBox(
+        width: getWidth(context) > 500
+            ? getWidth(context) * 0.400
+            : getWidth(context) * 0.425,
+        height: (widget.note as DetailedNote).imgPaths.length == 2
+            ? getWidth(context) * 0.15
+            : getWidth(context) > 500
+                ? getWidth(context) * 0.2
+                : getWidth(context) * 0.425,
+        child: MasonryGridView.builder(
+          itemCount: (widget.note as DetailedNote).imgPaths.length,
+          gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount:
+                (widget.note as DetailedNote).imgPaths.length < 2 ? 1 : 2,
           ),
-        ),
-      ));
-      //note with image
-    } else if (widget.note.type == 'NoteWithImage') {
-      children.add(Expanded(
-        child: Image.asset(
-          (widget.note as NoteWithImage).imagePath,
-          fit: BoxFit.cover,
+          itemBuilder: (BuildContext context, int index) {
+            return Image.file(
+              File((widget.note as DetailedNote).imgPaths[index]),
+              fit: BoxFit.cover,
+            );
+          },
         ),
       ));
     }
-    return IntrinsicHeight(
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.425,
-        decoration: BoxDecoration(
-            color: getcolor(widget.note.colorNumber),
-            borderRadius: BorderRadius.all(Radius.circular(15))),
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: children,
-              ),
-            ),
-            Positioned(
-              child: buildLastRow(),
-              top: 0,
-              right: 0,
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildRow(String labelText, bool tick) {
-    bool itemsChecked = tick;
-    return Row(
-      children: [
-        Checkbox(
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          value: tick,
-          focusColor: Colors.red,
-          activeColor: Colors.green,
-          onChanged: (bool? value) {},
-        ),
-        Expanded(
-          child: Text(
-            labelText,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 10,
-              decoration: itemsChecked ? TextDecoration.lineThrough : null,
+    if (widget.note is DetailedNote &&
+        (widget.note as DetailedNote).tasks.length > 0) {
+      children.add(
+        Column(
+          // Column'ın boyutlarını dikkatlice ayarlayın
+          children: List.generate(
+            (widget.note as DetailedNote).tasks.length,
+            (index) => buildRow(
+              (widget.note as DetailedNote).tasks[index],
             ),
           ),
         ),
-      ],
+      );
+      //note with image
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+          color: getcolor(widget.note.colorNumber),
+          borderRadius: BorderRadius.all(Radius.circular(7))),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: children,
+        ),
+      ),
     );
   }
 }
@@ -122,39 +111,3 @@ TextStyle tasklisteStyle = TextStyle(
   fontSize: 10,
   fontFamily: 'Poppins',
 );
-Widget buildLastRow() {
-  return GestureDetector(
-    onTap: () {
-      print("pressed");
-    },
-    child: Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(10),
-        ),
-      ),
-      child: Icon(
-        Icons.arrow_forward_ios,
-        size: 20,
-      ),
-    ),
-  );
-}
-
-Color getcolor(colorNumber) {
-  switch (colorNumber) {
-    case 1:
-      return Colors.yellow.withOpacity(0.5);
-    case 2:
-      return Colors.red.withOpacity(0.5);
-    case 3:
-      return Colors.green.withOpacity(0.5);
-    case 4:
-      return Colors.blue.withOpacity(0.5);
-    default:
-      return Colors.purple.withOpacity(0.5);
-  }
-}

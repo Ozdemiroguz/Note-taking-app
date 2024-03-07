@@ -1,4 +1,4 @@
-package com.example.firstvisual
+package com.noteitNotakingapp
 
 import io.flutter.embedding.android.FlutterActivity
 

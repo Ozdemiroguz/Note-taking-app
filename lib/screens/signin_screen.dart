@@ -1,5 +1,8 @@
+import 'package:firstvisual/homeScreen/home_screen.dart';
+import 'package:firstvisual/screens/getStartedPage.dart';
 import 'package:flutter/material.dart';
 import 'package:firstvisual/services/auth_services.dart';
+import 'package:lottie/lottie.dart';
 
 class SignInScreen extends StatelessWidget {
   final AuthService authService = AuthService();
@@ -11,16 +14,28 @@ class SignInScreen extends StatelessWidget {
         title: Text('Giriş Yap'),
       ),
       body: Center(
-        child: ElevatedButton(
-          child: Text('Giriş Yap'),
-          onPressed: () async {
-            bool result = authService.signIn();
-            if (result) {
-              Navigator.pushReplacementNamed(context, '/home');
-            } else {
-              // Hata mesajını göster
-            }
-          },
+        child: Column(
+          children: [
+            SizedBox(
+              child: Lottie.asset('animations/Animation - 1707940217335.json'),
+            ),
+            ElevatedButton(
+              child: Text('Giriş Yap'),
+              onPressed: () async {
+                bool result = authService.signIn();
+                if (result) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FeaturePage(),
+                    ),
+                  );
+                } else {
+                  // Hata mesajını göster
+                }
+              },
+            ),
+          ],
         ),
       ),
     );
