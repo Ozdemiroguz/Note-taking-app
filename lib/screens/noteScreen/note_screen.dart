@@ -2,17 +2,21 @@
 
 import 'dart:io';
 
-import 'package:firstvisual/drawingPage/drawing_app.dart';
-
+import 'package:firstvisual/models/folder.dart';
 import 'package:firstvisual/models/note.dart';
+import 'package:firstvisual/screens/drawingPage/drawing_app.dart';
 import 'package:firstvisual/services/ImageService.dart';
 import 'package:firstvisual/services/noteServices.dart';
+import 'package:firstvisual/services/note_sqlite_services.dart';
 import 'package:firstvisual/styles/colors.dart';
 import 'package:firstvisual/styles/dateFormat.dart';
 import 'package:firstvisual/styles/shape.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:sqflite/sqlite_api.dart';
 
 class NoteScreen extends StatefulWidget {
   final Note note;
@@ -24,19 +28,32 @@ class NoteScreen extends StatefulWidget {
 }
 
 class _Page2State extends State<NoteScreen> {
+  DatabaseService databaseService = DatabaseService();
+
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   bool shouldSave = true;
   List<TextEditingController> taskControllers = [];
+  List<Folder> folders = [];
+  String dropdownValue = 'All Notes';
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _getFiles();
+    DetailedNote initalNote = widget.note as DetailedNote;
     taskControllers = List.generate(
       (widget.note as DetailedNote).tasks.length,
       (index) => TextEditingController(
           text: (widget.note as DetailedNote).tasks[index].task),
     );
+  }
+
+  _getFiles() async {
+    List<Folder> _folders = await databaseService.getFolders();
+    setState(() {
+      folders = _folders;
+    });
   }
 
   @override
@@ -48,199 +65,19 @@ class _Page2State extends State<NoteScreen> {
 
     if (widget.note is DetailedNote &&
         (widget.note as DetailedNote).imgPaths.length > 0) {
-      children.add(Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: SizedBox(
-              width: getWidth(context) * 0.9,
-              child: SizedBox(
-                width: getWidth(context) * 0.425,
-                height: getWidth(context) *
-                    ((widget.note as DetailedNote).imgPaths.length == 2
-                        ? 0.45
-                        : 0.9),
-                child: MasonryGridView.builder(
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                  itemCount: (widget.note as DetailedNote).imgPaths.length,
-                  gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount:
-                        (widget.note as DetailedNote).imgPaths.length < 2
-                            ? 1
-                            : 2,
-                  ),
-                  itemBuilder: (BuildContext context, int index) {
-                    return GestureDetector(
-                      onTap: () {},
-                      child: GestureDetector(
-                        onTap: () => showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              elevation: 0,
-                              backgroundColor: Colors.transparent,
-                              content: Image.file(
-                                File((widget.note as DetailedNote)
-                                    .imgPaths[index]),
-                                fit: BoxFit.cover,
-                              ),
-                            );
-                          },
-                        ),
-                        child: Stack(
-                          children: [
-                            Image.file(
-                              File((widget.note as DetailedNote)
-                                  .imgPaths[index]),
-                              fit: BoxFit.cover,
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  (widget.note as DetailedNote)
-                                      .imgPaths
-                                      .removeAt(index);
-                                });
-                              },
-                              icon: Icon(
-                                Icons.delete,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-        ],
-      ));
+      children.add(ImagePart());
     }
-    children.add(
-      TextField(
-        controller: descriptionController,
-        onChanged: (value) {
-          setState(() {
-            widget.note.description = value.toString();
-            shouldSave = false;
-          });
-        },
 
-        maxLines: null, // Sınırsız sayıda satıra izin verir
-        decoration: InputDecoration(
-          hintText: "Add description",
-          border: InputBorder.none,
-        ),
-        style: TextStyle(
-          fontSize: 20,
-        ),
-      ),
-    );
+    children.add(DescPart());
+
     if (widget.note is DetailedNote &&
         (widget.note as DetailedNote).tasks.length > 0) {
-      children.add(Column(
-        children: List.generate(
-          (widget.note as DetailedNote).tasks.length,
-          (index) => Row(
-            children: [
-              Checkbox(
-                value: (widget.note as DetailedNote).tasks[index].isDone,
-                onChanged: (bool? value) {
-                  setState(() {
-                    (widget.note as DetailedNote).tasks[index].isDone = value!;
-                    shouldSave = false;
-                  });
-                },
-              ),
-              Expanded(
-                child: TextField(
-                  controller: taskControllers[index],
-                  onChanged: (value) {
-                    setState(() {
-                      (widget.note as DetailedNote).tasks[index].task =
-                          value.toString();
-                      shouldSave = false;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    hintText: "Task",
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  style: TextStyle(
-                    fontSize: 14,
-                    decoration:
-                        (widget.note as DetailedNote).tasks[index].isDone
-                            ? TextDecoration.lineThrough
-                            : null,
-                  ),
-                ),
-              ),
-
-              /*Text(
-                (widget.note as DetailedNote).tasks[index].task,
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 14,
-                  decoration: (widget.note as DetailedNote).tasks[index].isDone
-                      ? TextDecoration.lineThrough
-                      : null,
-                ),
-              ),*/
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    (widget.note as DetailedNote).tasks.removeAt(index);
-                    shouldSave = false;
-                  });
-                },
-                child: Icon(Icons.delete),
-              )
-            ],
-          ),
-        ),
-      )); //note with image
+      children.add(TaskPart()); //note with image
     }
     // ignore: unnecessary_statements
     children.add(SizedBox(height: 100));
     //save and delete buttons
-    return /* PopScope(
-        canPop: false,
-        onPopInvoked: (didPop) async {
-          if (!shouldSave) {
-            final shouldPop = await showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text('Alert!'),
-                content: Text(//alert message english
-                    'Changes will not be saved. Are you sure you want to exit?'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(false),
-                    child: Text('No'),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(true),
-                    child: Text('Yes'),
-                  ),
-                ],
-              ),
-            );
-
-            if (shouldPop == true) {
-              Navigator.of(context).pop();
-            }
-          } else {
-            Navigator.of(context).pop();
-          }
-        },
-        child:*/
-        Stack(
+    return Stack(
       children: [
         Container(
           color: Colors.white,
@@ -251,32 +88,7 @@ class _Page2State extends State<NoteScreen> {
               leading: IconButton(
                 icon: Icon(Icons.arrow_back),
                 onPressed: () async {
-                  if (!shouldSave) {
-                    final shouldPop = await showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text('Alert!'),
-                        content: Text(
-                            'Changes will not be saved. Are you sure you want to exit?'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(false),
-                            child: Text('No'),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(true),
-                            child: Text('Yes'),
-                          ),
-                        ],
-                      ),
-                    );
-
-                    if (shouldPop == true) {
-                      Navigator.of(context).pop();
-                    }
-                  } else {
-                    Navigator.of(context).pop();
-                  }
+                  _backFunction(context);
                 },
               ),
 
@@ -293,26 +105,17 @@ class _Page2State extends State<NoteScreen> {
                     ),
                   ),
                 ),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 20, top: 35),
-                            child: Text("${format3(widget.note.date)}",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey[800],
-                                ),
-                                textAlign: TextAlign.start),
-                          ),
-                        ],
+                      SizedBox(
+                        width: 60,
+                        height: 100,
                       ),
                       SizedBox(
-                        height: 60,
+                        height: 80,
+                        width: 200,
                         child: TextField(
                           textAlign: TextAlign.center,
                           controller: titleController,
@@ -333,6 +136,39 @@ class _Page2State extends State<NoteScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 20, top: 35),
+                            child: Text("${format3(widget.note.date)}",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey[800],
+                                ),
+                                textAlign: TextAlign.start),
+                          ),
+                          DropdownButton<String>(
+                            value: dropdownValue,
+                            onChanged: (newValue) {
+                              setState(() {
+                                dropdownValue = newValue!;
+                              });
+                            },
+                            items: <String>[
+                              'All Notes',
+                              'Dosya1',
+                              'Dosya2',
+                              'Dosya3'
+                            ].map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                        ],
                       ),
                     ]),
               ),
@@ -361,7 +197,7 @@ class _Page2State extends State<NoteScreen> {
                 addDraw(),
                 choiceColor(),
                 deleteButton(),
-                saveButton(),
+                //file name seçceğimiz bir dropdown
               ],
             ),
           ),
@@ -386,7 +222,7 @@ class _Page2State extends State<NoteScreen> {
 
   Widget addTaskButton() {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(2.0),
       child: FloatingActionButton(
         heroTag: "btn7",
         onPressed: () {
@@ -431,7 +267,7 @@ class _Page2State extends State<NoteScreen> {
 
   Widget addImage() {
     return Padding(
-      padding: const EdgeInsets.all(4.0),
+      padding: const EdgeInsets.all(2.0),
       child: FloatingActionButton(
         heroTag: "btn6",
         onPressed: () {
@@ -486,7 +322,7 @@ class _Page2State extends State<NoteScreen> {
 
   Widget addDraw() {
     return Padding(
-      padding: const EdgeInsets.all(4.0),
+      padding: const EdgeInsets.all(2.0),
       child: FloatingActionButton(
         heroTag: "btn5",
         onPressed: () async {
@@ -511,7 +347,7 @@ class _Page2State extends State<NoteScreen> {
 
   Widget deleteButton() {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(2.0),
       child: FloatingActionButton(
         heroTag: "btn4",
         onPressed: () async {
@@ -555,7 +391,7 @@ class _Page2State extends State<NoteScreen> {
 
   Widget saveButton() {
     return Padding(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(2.0),
       child: FloatingActionButton(
         heroTag: "btn3",
         onPressed: () async {
@@ -571,7 +407,7 @@ class _Page2State extends State<NoteScreen> {
 
   Widget infoButton() {
     return Padding(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(2.0),
       child: FloatingActionButton(
         heroTag: "btn2",
         onPressed: () async {
@@ -595,7 +431,7 @@ class _Page2State extends State<NoteScreen> {
 
   Widget choiceColor() {
     return Padding(
-      padding: const EdgeInsets.all(4.0),
+      padding: const EdgeInsets.all(2.0),
       child: FloatingActionButton(
         heroTag: "btn1",
         onPressed: () async {
@@ -634,7 +470,47 @@ class _Page2State extends State<NoteScreen> {
     );
   }
 
-  saveTask() async {
+  Future saveTask1() async {
+    NoteService noteService = NoteService();
+    int id = -1;
+
+    if (widget.note.noteId == -1) {
+      id = await noteService.saveNote(widget.note as DetailedNote);
+      if (id != -1) {
+        setState(() {
+          widget.note.noteId = id;
+        });
+        await ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(
+            bottom: 90,
+            right: 20,
+            left: 20,
+          ),
+          content: Text("Note saved"),
+        ));
+        shouldSave = true;
+      }
+    } else {
+      await noteService.updateNote(widget.note as DetailedNote);
+      setState(() {});
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(
+          bottom: 90,
+          right: 20,
+          left: 20,
+        ),
+        content: Text(
+          "Note updated",
+          textAlign: TextAlign.center,
+        ),
+      ));
+      shouldSave = true;
+    }
+  }
+
+  Future saveTask() async {
     NoteService noteService = NoteService();
     int id = -1;
     setState(() {
@@ -650,7 +526,7 @@ class _Page2State extends State<NoteScreen> {
           await ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             behavior: SnackBarBehavior.floating,
             margin: EdgeInsets.only(
-              bottom: 90,
+              bottom: 20,
               right: 20,
               left: 20,
             ),
@@ -665,7 +541,7 @@ class _Page2State extends State<NoteScreen> {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           behavior: SnackBarBehavior.floating,
           margin: EdgeInsets.only(
-            bottom: 90,
+            bottom: 20,
             right: 20,
             left: 20,
           ),
@@ -677,5 +553,162 @@ class _Page2State extends State<NoteScreen> {
         shouldSave = true;
       });
     }
+  }
+
+//image part
+  Widget ImagePart() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 10),
+        child: SizedBox(
+          width: getWidth(context) * 0.9,
+          child: SizedBox(
+            width: getWidth(context) * 0.425,
+            height: getWidth(context) *
+                ((widget.note as DetailedNote).imgPaths.length == 2
+                    ? 0.45
+                    : 0.9),
+            child: MasonryGridView.builder(
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              itemCount: (widget.note as DetailedNote).imgPaths.length,
+              gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount:
+                    (widget.note as DetailedNote).imgPaths.length < 2 ? 1 : 2,
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                  onTap: () {},
+                  child: GestureDetector(
+                    onTap: () => showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          elevation: 0,
+                          backgroundColor: Colors.transparent,
+                          content: Image.file(
+                            File((widget.note as DetailedNote).imgPaths[index]),
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      },
+                    ),
+                    child: Stack(
+                      children: [
+                        Image.file(
+                          File((widget.note as DetailedNote).imgPaths[index]),
+                          fit: BoxFit.cover,
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              (widget.note as DetailedNote)
+                                  .imgPaths
+                                  .removeAt(index);
+                            });
+                          },
+                          icon: Icon(
+                            Icons.delete,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+//description part
+  Widget DescPart() {
+    return TextField(
+      controller: descriptionController,
+      onChanged: (value) {
+        setState(() {
+          widget.note.description = value.toString();
+          shouldSave = false;
+        });
+      },
+
+      maxLines: null, // Sınırsız sayıda satıra izin verir
+      decoration: InputDecoration(
+        hintText: "Add description",
+        border: InputBorder.none,
+      ),
+      style: TextStyle(
+        fontSize: 20,
+      ),
+    );
+  }
+
+//task part
+  Widget TaskPart() {
+    return Column(
+      children: List.generate(
+        (widget.note as DetailedNote).tasks.length,
+        (index) => Row(
+          children: [
+            Checkbox(
+              value: (widget.note as DetailedNote).tasks[index].isDone,
+              onChanged: (bool? value) {
+                setState(() {
+                  (widget.note as DetailedNote).tasks[index].isDone = value!;
+                  shouldSave = false;
+                });
+              },
+            ),
+            Expanded(
+              child: TextField(
+                controller: taskControllers[index],
+                onChanged: (value) {
+                  setState(() {
+                    (widget.note as DetailedNote).tasks[index].task =
+                        value.toString();
+                    shouldSave = false;
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: "Task",
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                style: TextStyle(
+                  fontSize: 14,
+                  decoration: (widget.note as DetailedNote).tasks[index].isDone
+                      ? TextDecoration.lineThrough
+                      : null,
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  (widget.note as DetailedNote).tasks.removeAt(index);
+                  shouldSave = false;
+                });
+              },
+              child: Icon(Icons.delete),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+//back function
+  void _backFunction(BuildContext context) async {
+    if (shouldSave) {
+      print("not changed");
+    } else {
+      print("changed");
+      await saveTask1();
+    }
+
+    Navigator.pop(context);
   }
 }

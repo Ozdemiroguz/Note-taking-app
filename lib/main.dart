@@ -1,5 +1,5 @@
-import 'package:firstvisual/homeScreen/home_screen.dart';
 import 'package:firstvisual/screens/getStartedPage.dart';
+import 'package:firstvisual/screens/homeScreen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

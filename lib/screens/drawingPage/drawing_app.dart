@@ -2,8 +2,8 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:firstvisual/drawingPage/drawing_area.dart';
-import 'package:firstvisual/drawingPage/my_custom_painter.dart';
+import 'package:firstvisual/screens/drawingPage/drawing_area.dart';
+import 'package:firstvisual/screens/drawingPage/my_custom_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';

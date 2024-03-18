@@ -1,4 +1,4 @@
-import 'package:firstvisual/homeScreen/home_screen.dart';
+import 'package:firstvisual/screens/homeScreen/home_screen.dart';
 import 'package:firstvisual/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';

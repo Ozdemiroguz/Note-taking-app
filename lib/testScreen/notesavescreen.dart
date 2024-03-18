@@ -1,3 +1,4 @@
+import 'package:firstvisual/models/folder.dart';
 import 'package:firstvisual/models/note.dart';
 import 'package:firstvisual/services/noteServices.dart';
 import 'package:firstvisual/services/note_sqlite_services.dart';
@@ -31,6 +32,7 @@ class tableScreen extends StatefulWidget {
 class _MyHomePageState extends State<tableScreen> {
   DatabaseService dbService = DatabaseService();
   List<DetailedNote> notes = [];
+  List<Folder> folders = [];
 
   @override
   void initState() {
@@ -40,8 +42,10 @@ class _MyHomePageState extends State<tableScreen> {
 
   void _refreshNotes() async {
     List<DetailedNote> freshNotes = await dbService.getNotes();
+    List<Folder> _folders = await dbService.getFolders();
     setState(() {
       notes = freshNotes;
+      folders = _folders;
       for (var note in notes) {
         print("Note: " + note.toMap().toString());
       }
@@ -54,31 +58,58 @@ class _MyHomePageState extends State<tableScreen> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: ListView.builder(
-        itemCount: notes.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(notes[index].title),
-            subtitle: Column(
-              children: [
-                Text(notes[index].noteId.toString()),
-                Text(notes[index].description),
-                Text(notes[index].date.toString()),
-                Text(notes[index].finishTime.toString()),
-                Text(notes[index].imgPaths.toString()),
-              ],
-            ),
-            trailing: IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () async {
-                NoteService noteService = NoteService();
-                await noteService.deleteNote(notes[index]);
+      body: Column(
+        children: [
+          SizedBox(
+            height: 300,
+            child: ListView.builder(
+              itemCount: notes.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(notes[index].title),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(notes[index].noteId.toString()),
+                      Text(notes[index].description),
+                      Text(notes[index].date.toString()),
+                      Text(notes[index].finishTime.toString()),
+                      Text(notes[index].imgPaths.toString()),
+                    ],
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () async {
+                      NoteService noteService = NoteService();
+                      await noteService.deleteNote(notes[index]);
 
-                _refreshNotes();
+                      _refreshNotes();
+                    },
+                  ),
+                );
               },
             ),
-          );
-        },
+          ),
+          SizedBox(
+            height: 300,
+            child: ListView.builder(
+              itemCount: folders.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(folders[index].folderName),
+                  subtitle: Text(folders[index].folderId.toString()),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () async {
+                      await dbService.deleteFolder(folders[index].folderId);
+                      _refreshNotes();
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
 
       floatingActionButton: Row(
@@ -86,19 +117,19 @@ class _MyHomePageState extends State<tableScreen> {
           FloatingActionButton(
             onPressed: () async {
               DetailedNote note = DetailedNote(
-                2,
-                'type1',
-                0,
-                'title',
-                'description',
-                DateTime.now(),
-                DateTime.now(),
-                ['imgPath1', 'imgPath2'],
-                [
-                  Task('task1', false),
-                  Task('task2', true),
-                ],
-              );
+                  2,
+                  'type1',
+                  0,
+                  'title',
+                  'description',
+                  DateTime.now(),
+                  DateTime.now(),
+                  ['imgPath1', 'imgPath2'],
+                  [
+                    Task('task1', false),
+                    Task('task2', true),
+                  ],
+                  '');
 
               int id = await dbService.insertNote(note);
               print("Note id: $id");
@@ -116,8 +147,50 @@ class _MyHomePageState extends State<tableScreen> {
             tooltip: 'Veritabanını Sil',
             child: Icon(Icons.delete),
           ),
+          FloatingActionButton(
+            onPressed: () {
+              //add file to database before open show dialog and ask for file
+              TextEditingController _textFieldController =
+                  TextEditingController();
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text('Dosya Adı Girin'),
+                    content: TextField(
+                      controller: _textFieldController,
+                      autofocus: true,
+                      decoration: InputDecoration(
+                        labelText: 'Dosya Adı',
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text('İptal'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: Text('Add File'),
+                        onPressed: () async {
+                          //add file to database
+                          Folder folder = Folder(0, _textFieldController.text);
+                          await dbService.insertFolder(folder);
+                          Navigator.of(context).pop();
+                          _refreshNotes();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            child: Icon(Icons.add),
+          )
         ],
       ),
+
       //delete database button
     );
   }
