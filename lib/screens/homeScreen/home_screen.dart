@@ -9,6 +9,7 @@ import 'package:firstvisual/services/note_sqlite_services.dart';
 import 'package:firstvisual/styles/colors.dart';
 import 'package:firstvisual/styles/shape.dart';
 import 'package:firstvisual/testScreen/notesavescreen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -51,6 +52,12 @@ class _HomeScreenState extends State<HomeScreen> {
     List<Folder> _folders = await dbService.getFolders();
     setState(() {
       folders = _folders;
+      //folders boşşsa All Notes Ekle
+      if (folders.isEmpty) {
+        folders.add(Folder(-1, "All Notes"));
+        dbService.insertFolder(Folder(-1, "All Notes"));
+      }
+
       notes = freshNotes.reversed.toList();
       filteredNotes = notes;
     });
@@ -59,6 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     TextEditingController searchController = TextEditingController();
+
     return Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: speedDialer(),
@@ -136,7 +144,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Center(
                               child: Column(
                                 children: [
-                                  Lottie.asset('animations/rabbit.json'),
+                                  SizedBox(
+                                      height: getHeight(context) * 0.5,
+                                      child: Lottie.asset(
+                                          'animations/rabbit.json')),
                                   //boş klasördeki yazı
                                   Text(
                                     "You don't have any notes in this folder",
@@ -155,8 +166,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             crossAxisSpacing: 10,
                             mainAxisSpacing: 10,
                             gridDelegate:
-                                const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
+                                SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: getWidth(context) > 600 ? 3 : 2,
                             ),
                             itemBuilder: (BuildContext context, int index) {
                               return Stack(children: [
@@ -176,7 +187,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ).then((value) {
                                             _refreshNotes();
                                           });
-                                        }))
+                                        })),
+                                Positioned(
+                                    bottom: 10,
+                                    right: 10,
+                                    child: Text(
+                                      //file name
+                                      filteredNotes[index].fileName,
+                                    ))
                               ]);
                             },
                           );
@@ -187,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     GridView.builder(
                       itemCount: folders.length + 1,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
+                        crossAxisCount: getWidth(context) > 600 ? 3 : 2,
                         crossAxisSpacing: 30,
                         mainAxisSpacing: 30,
                       ),
@@ -411,6 +429,7 @@ class _HomeScreenState extends State<HomeScreen> {
       defaultNote.title = "";
       defaultNote.tasks = [];
       defaultNote.description = "";
+      defaultNote.fileName = 'All Notes';
     });
 
     await Navigator.push(

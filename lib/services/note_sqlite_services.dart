@@ -98,7 +98,7 @@ class DatabaseService {
     List<DetailedNote> notes = await getNotes();
     for (DetailedNote note in notes) {
       if (note.fileName.contains(folderName)) {
-        note.fileName = note.fileName.replaceAll(folderName, '');
+        note.fileName = note.fileName.replaceAll(folderName, 'All Notes');
         await updateNote(note);
       }
     }

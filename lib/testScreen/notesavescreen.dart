@@ -75,6 +75,7 @@ class _MyHomePageState extends State<tableScreen> {
                       Text(notes[index].date.toString()),
                       Text(notes[index].finishTime.toString()),
                       Text(notes[index].imgPaths.toString()),
+                      Text("filename: " + notes[index].fileName.toString()),
                     ],
                   ),
                   trailing: IconButton(

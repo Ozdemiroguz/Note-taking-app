@@ -119,6 +119,7 @@ AppBar appBar(BuildContext context) {
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   //saate göre good morning good afternoon good evening
                   Row(
@@ -128,7 +129,7 @@ AppBar appBar(BuildContext context) {
                               ? titleStyleTablet
                               : titleStyle),
                       SizedBox(
-                          width: getWidth(context) > 500 ? 20 : 60,
+                          width: getWidth(context) > 500 ? 80 : 60,
                           child: Lottie.asset(greeting == "Good Morning"
                               ? "animations/Animation - 1705919921302.json"
                               : (greeting == "Good Afternoon"

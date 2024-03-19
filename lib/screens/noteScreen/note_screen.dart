@@ -35,12 +35,16 @@ class _Page2State extends State<NoteScreen> {
   bool shouldSave = true;
   List<TextEditingController> taskControllers = [];
   List<Folder> folders = [];
-  String dropdownValue = 'All Notes';
+  String dropdownValue = ''; // İlk değeri varsayılan olarak seçtik.
+  // İlk değeri varsayılan olarak seçtik.
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _getFiles();
+    dropdownValue = (widget.note as DetailedNote).fileName == ''
+        ? "All Notes"
+        : (widget.note as DetailedNote).fileName;
+    _getFolders();
     DetailedNote initalNote = widget.note as DetailedNote;
     taskControllers = List.generate(
       (widget.note as DetailedNote).tasks.length,
@@ -49,7 +53,7 @@ class _Page2State extends State<NoteScreen> {
     );
   }
 
-  _getFiles() async {
+  _getFolders() async {
     List<Folder> _folders = await databaseService.getFolders();
     setState(() {
       folders = _folders;
@@ -144,27 +148,42 @@ class _Page2State extends State<NoteScreen> {
                             padding: const EdgeInsets.only(right: 20, top: 35),
                             child: Text("${format3(widget.note.date)}",
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 13,
                                   color: Colors.grey[800],
                                 ),
                                 textAlign: TextAlign.start),
                           ),
                           DropdownButton<String>(
+                            //ıconu kaldır
+                            icon: Icon(null),
                             value: dropdownValue,
                             onChanged: (newValue) {
                               setState(() {
                                 dropdownValue = newValue!;
+                                (widget.note as DetailedNote).fileName =
+                                    dropdownValue;
+                                shouldSave = false;
                               });
                             },
-                            items: <String>[
-                              'All Notes',
-                              'Dosya1',
-                              'Dosya2',
-                              'Dosya3'
-                            ].map<DropdownMenuItem<String>>((String value) {
+                            //folders itemları
+                            items:
+                                folders.map<DropdownMenuItem<String>>((folder) {
                               return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
+                                value: folder.folderName,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.folder,
+                                      size: 14,
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(folder.folderName,
+                                        style: TextStyle(fontSize: 14)),
+                                  ],
+                                ),
                               );
                             }).toList(),
                           ),
@@ -187,21 +206,18 @@ class _Page2State extends State<NoteScreen> {
         Positioned(
           width: getWidth(context),
           bottom: 15,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                addTaskButton(),
-                addImage(),
-                addDraw(),
-                choiceColor(),
-                deleteButton(),
-                //file name seçceğimiz bir dropdown
-              ],
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              addTaskButton(),
+              addImage(),
+              addDraw(),
+              choiceColor(),
+              deleteButton(),
+              //file name seçceğimiz bir dropdown
+            ],
           ),
-        )
+        ),
       ],
     );
   }

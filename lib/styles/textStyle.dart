@@ -9,12 +9,12 @@ TextStyle titleStyle = TextStyle(
 // tablet için yazuı boyutu
 TextStyle titleStyleTablet = TextStyle(
   color: Colors.white,
-  fontSize: 20,
+  fontSize: 30,
   fontWeight: FontWeight.bold,
   height: 1.3,
 );
 TextStyle subTitleStyle = TextStyle(
   color: Colors.white,
-  fontSize: 14,
+  fontSize: 18,
   fontWeight: FontWeight.normal,
 );
