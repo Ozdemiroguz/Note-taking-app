@@ -68,8 +68,11 @@ class _HomeScreenState extends State<HomeScreen> {
     TextEditingController searchController = TextEditingController();
 
     return Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        floatingActionButton: speedDialer(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+        floatingActionButton: Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: speedDialer(),
+        ),
         endDrawer: drawerFunc(context, notes.length),
         appBar: appBar(context),
         body: _buildBody());
@@ -189,11 +192,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                           });
                                         })),
                                 Positioned(
-                                    bottom: 10,
-                                    right: 10,
-                                    child: Text(
-                                      //file name
-                                      filteredNotes[index].fileName,
+                                    bottom: 2,
+                                    right: 2,
+                                    child: Card(
+                                      //borderadius
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(3),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 5,
+                                            right: 5,
+                                            top: 1,
+                                            bottom: 1),
+                                        child: Text(
+                                          //file name
+                                          filteredNotes[index].fileName,
+                                          style: TextStyle(fontSize: 12),
+                                        ),
+                                      ),
                                     ))
                               ]);
                             },
@@ -430,6 +447,7 @@ class _HomeScreenState extends State<HomeScreen> {
       defaultNote.tasks = [];
       defaultNote.description = "";
       defaultNote.fileName = 'All Notes';
+      defaultNote.colorNumber = 1;
     });
 
     await Navigator.push(
@@ -495,6 +513,8 @@ class _HomeScreenState extends State<HomeScreen> {
       defaultNote.imgPaths = [];
       defaultNote.tasks = [];
       defaultNote.description = "";
+      defaultNote.fileName = 'All Notes';
+      defaultNote.colorNumber = 1;
     });
   }
 
@@ -572,7 +592,6 @@ class _HomeScreenState extends State<HomeScreen> {
         floatingActionButtonCamera(),
         floatingActionButtonAddnote(),
         floatingActionButtonAddDraw(),
-        floatingActionButtonTestScreen(),
       ],
     );
   }

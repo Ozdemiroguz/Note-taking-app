@@ -162,7 +162,9 @@ class _Page2State extends State<NoteScreen> {
                                 dropdownValue = newValue!;
                                 (widget.note as DetailedNote).fileName =
                                     dropdownValue;
-                                shouldSave = false;
+                                if (widget.note.noteId != -1) {
+                                  shouldSave = false;
+                                }
                               });
                             },
                             //folders itemları
@@ -173,15 +175,15 @@ class _Page2State extends State<NoteScreen> {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
+                                    Text(folder.folderName,
+                                        style: TextStyle(fontSize: 14)),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
                                     Icon(
                                       Icons.folder,
                                       size: 14,
                                     ),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(folder.folderName,
-                                        style: TextStyle(fontSize: 14)),
                                   ],
                                 ),
                               );
@@ -472,7 +474,9 @@ class _Page2State extends State<NoteScreen> {
                   onColorChanged: (Color color) {
                     setState(() {
                       widget.note.colorNumber = getcolorNumber(color);
-                      shouldSave = false;
+                      if (widget.note.noteId != -1) {
+                        shouldSave = false;
+                      }
                     });
                   },
                   pickerColor: getcolor(widget.note.colorNumber),
@@ -496,34 +500,39 @@ class _Page2State extends State<NoteScreen> {
         setState(() {
           widget.note.noteId = id;
         });
-        await ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.only(
-            bottom: 90,
-            right: 20,
-            left: 20,
-          ),
-          content: Text("Note saved"),
-        ));
+        await scaffoldFunc("Note saved");
         shouldSave = true;
       }
     } else {
       await noteService.updateNote(widget.note as DetailedNote);
       setState(() {});
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.only(
-          bottom: 90,
-          right: 20,
-          left: 20,
-        ),
-        content: Text(
-          "Note updated",
-          textAlign: TextAlign.center,
-        ),
-      ));
+      scaffoldFunc("Note updated");
       shouldSave = true;
     }
+  }
+
+  scaffoldFunc(String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      behavior: SnackBarBehavior.fixed,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      content: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.only(left: 40, right: 40, top: 15, bottom: 15),
+            decoration: BoxDecoration(
+              color: AppColors.softBack,
+              borderRadius: BorderRadius.all(Radius.circular(7)),
+            ),
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    ));
   }
 
   Future saveTask() async {

@@ -35,11 +35,16 @@ class _TaskContainerState extends State<TaskContainerList> {
         thickness: 1,
         color: Colors.black,
       ),
-      Text(
-        widget.note.description,
-        style: tasklisteStyle,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
+      SizedBox(
+        width: getWidth(context) > 500
+            ? getWidth(context) * 0.400
+            : getWidth(context) * 0.425,
+        child: Text(
+          widget.note.description,
+          style: tasklisteStyle,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
       )
     ];
     if (widget.note is DetailedNote &&
@@ -83,6 +88,9 @@ class _TaskContainerState extends State<TaskContainerList> {
       );
       //note with image
     }
+    children.add(SizedBox(
+      height: 20,
+    ));
 
     return Container(
       decoration: BoxDecoration(
