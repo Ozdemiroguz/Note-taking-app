@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:firstvisual/models/note.dart';
-import 'package:firstvisual/services/ImageService.dart';
-import 'package:firstvisual/services/note_sqlite_services.dart';
+import 'package:firstvisual/features/data/models/note.dart';
+import 'package:firstvisual/features/data/services/ImageService.dart';
+import 'package:firstvisual/features/data/services/note_sqlite_services.dart';
 
 class NoteService {
   DatabaseService dbService = DatabaseService();

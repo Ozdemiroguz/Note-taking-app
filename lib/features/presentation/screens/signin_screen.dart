@@ -1,6 +1,6 @@
-import 'package:firstvisual/screens/getStartedPage.dart';
+import 'package:firstvisual/features/presentation/screens/getStartedPage.dart';
 import 'package:flutter/material.dart';
-import 'package:firstvisual/services/auth_services.dart';
+import 'package:firstvisual/features/data/services/auth_services.dart';
 import 'package:lottie/lottie.dart';
 
 class SignInScreen extends StatelessWidget {

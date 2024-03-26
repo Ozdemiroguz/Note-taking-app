@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:firstvisual/models/note.dart';
+import 'package:firstvisual/features/data/models/note.dart';
 import 'package:firstvisual/styles/colors.dart';
 import 'package:firstvisual/styles/dateFormat.dart';
 import 'package:firstvisual/styles/shape.dart';
@@ -23,10 +23,6 @@ class _TaskContainerState extends State<TaskContainerList> {
   Widget build(BuildContext context) {
     List<Widget> children = [
       Text(
-        format1(widget.note.date),
-        style: taskdateStyle,
-      ),
-      Text(
         widget.note.title,
         style: tasktitleStyle,
         overflow: TextOverflow.ellipsis,
@@ -35,17 +31,17 @@ class _TaskContainerState extends State<TaskContainerList> {
         thickness: 1,
         color: Colors.black,
       ),
-      SizedBox(
-        width: getWidth(context) > 500
-            ? getWidth(context) * 0.400
-            : getWidth(context) * 0.425,
-        child: Text(
-          widget.note.description,
-          style: tasklisteStyle,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-      )
+      widget.note.description == ''
+          ? Container()
+          : Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Text(
+                widget.note.description,
+                style: tasklisteStyle,
+                maxLines: 8,
+                overflow: TextOverflow.ellipsis,
+              ),
+            )
     ];
     if (widget.note is DetailedNote &&
         (widget.note as DetailedNote).imgPaths.length > 0) {
@@ -65,9 +61,12 @@ class _TaskContainerState extends State<TaskContainerList> {
                 (widget.note as DetailedNote).imgPaths.length < 2 ? 1 : 2,
           ),
           itemBuilder: (BuildContext context, int index) {
-            return Image.file(
-              File((widget.note as DetailedNote).imgPaths[index]),
-              fit: BoxFit.cover,
+            return Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Image.file(
+                File((widget.note as DetailedNote).imgPaths[index]),
+                fit: BoxFit.cover,
+              ),
             );
           },
         ),
@@ -109,7 +108,7 @@ class _TaskContainerState extends State<TaskContainerList> {
 
 TextStyle tasktitleStyle = TextStyle(
   fontWeight: FontWeight.bold,
-  fontSize: 14,
+  fontSize: 20,
 );
 TextStyle taskdateStyle = TextStyle(
   color: Colors.grey[900],

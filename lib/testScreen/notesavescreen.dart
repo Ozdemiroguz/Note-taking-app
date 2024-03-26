@@ -1,7 +1,7 @@
-import 'package:firstvisual/models/folder.dart';
-import 'package:firstvisual/models/note.dart';
-import 'package:firstvisual/services/noteServices.dart';
-import 'package:firstvisual/services/note_sqlite_services.dart';
+import 'package:firstvisual/features/data/models/folder.dart';
+import 'package:firstvisual/features/data/models/note.dart';
+import 'package:firstvisual/features/data/services/noteServices.dart';
+import 'package:firstvisual/features/data/services/note_sqlite_services.dart';
 import 'package:flutter/material.dart';
 
 /*void main() {

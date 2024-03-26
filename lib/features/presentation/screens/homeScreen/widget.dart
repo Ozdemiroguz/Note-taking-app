@@ -1,4 +1,4 @@
-import 'package:firstvisual/onworkingScreen.dart';
+import 'package:firstvisual/features/presentation/screens/onworkingScreen.dart';
 import 'package:firstvisual/styles/colors.dart';
 import 'package:firstvisual/styles/dateFormat.dart';
 import 'package:firstvisual/styles/shape.dart';
@@ -109,7 +109,7 @@ AppBar appBar(BuildContext context) {
         ),
         child: Padding(
           padding: EdgeInsets.only(
-            top: getHeight(context) > 500 ? 30 : 15,
+            top: getWidth(context) > 500 ? 30 : 10,
             left: 30,
             right: 30,
           ),
@@ -181,56 +181,4 @@ AppBar appBar(BuildContext context) {
       toolbarHeight: getHeight(context) * 0.12,
       backgroundColor: Colors.transparent,
       elevation: 0);
-}
-
-Widget quetoContainer(BuildContext context, String? queto) {
-  return Container(
-      width: getWidth(context) * 0.9,
-      padding: EdgeInsets.all(10),
-      //queto container
-      decoration: BoxDecoration(
-        color: AppColors.softBack,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            "“",
-            style: TextStyle(
-                fontSize: 30,
-                height: 0.8,
-                color: Colors.white,
-                fontWeight: FontWeight.bold),
-          ),
-          Text(queto!,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  height: 1,
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold)),
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text("Sevimli Tavşik ",
-                    style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold)),
-                SizedBox(
-                  width: 30,
-                  child: Divider(
-                    color: Colors.grey[500],
-                    thickness: 0.8,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ));
 }

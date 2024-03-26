@@ -1,5 +1,5 @@
-import 'package:firstvisual/models/folder.dart';
-import 'package:firstvisual/models/note.dart';
+import 'package:firstvisual/features/data/models/folder.dart';
+import 'package:firstvisual/features/data/models/note.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'dart:async';

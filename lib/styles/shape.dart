@@ -1,4 +1,4 @@
-import 'package:firstvisual/models/note.dart';
+import 'package:firstvisual/features/data/models/note.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';

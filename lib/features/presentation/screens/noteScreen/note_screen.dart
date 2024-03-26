@@ -2,12 +2,12 @@
 
 import 'dart:io';
 
-import 'package:firstvisual/models/folder.dart';
-import 'package:firstvisual/models/note.dart';
-import 'package:firstvisual/screens/drawingPage/drawing_app.dart';
-import 'package:firstvisual/services/ImageService.dart';
-import 'package:firstvisual/services/noteServices.dart';
-import 'package:firstvisual/services/note_sqlite_services.dart';
+import 'package:firstvisual/features/data/models/folder.dart';
+import 'package:firstvisual/features/data/models/note.dart';
+import 'package:firstvisual/features/presentation/screens/drawingPage/drawing_app.dart';
+import 'package:firstvisual/features/data/services/ImageService.dart';
+import 'package:firstvisual/features/data/services/noteServices.dart';
+import 'package:firstvisual/features/data/services/note_sqlite_services.dart';
 import 'package:firstvisual/styles/colors.dart';
 import 'package:firstvisual/styles/dateFormat.dart';
 import 'package:firstvisual/styles/shape.dart';
@@ -148,7 +148,7 @@ class _Page2State extends State<NoteScreen> {
                             padding: const EdgeInsets.only(right: 20, top: 35),
                             child: Text("${format3(widget.note.date)}",
                                 style: TextStyle(
-                                  fontSize: 13,
+                                  fontSize: 10,
                                   color: Colors.grey[800],
                                 ),
                                 textAlign: TextAlign.start),
@@ -176,7 +176,7 @@ class _Page2State extends State<NoteScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Text(folder.folderName,
-                                        style: TextStyle(fontSize: 14)),
+                                        style: TextStyle(fontSize: 12)),
                                     SizedBox(
                                       width: 5,
                                     ),

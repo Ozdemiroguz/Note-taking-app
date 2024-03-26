@@ -1,9 +1,11 @@
-import 'package:firstvisual/screens/getStartedPage.dart';
-import 'package:firstvisual/screens/homeScreen/home_screen.dart';
+import 'package:firstvisual/features/presentation/screens/getStartedPage.dart';
+import 'package:firstvisual/features/presentation/screens/homeScreen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
 

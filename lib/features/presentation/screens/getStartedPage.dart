@@ -1,4 +1,4 @@
-import 'package:firstvisual/screens/homeScreen/home_screen.dart';
+import 'package:firstvisual/features/presentation/screens/homeScreen/home_screen.dart';
 import 'package:firstvisual/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -16,31 +16,31 @@ class _FeaturePageState extends State<FeaturePage> {
     {
       'title': 'Free Note Taking',
       'description':
-          'Users can freely take notes to record their thoughts, ideas, and tasks.',
+          'You can freely take notes to record your thoughts, ideas, and tasks.',
       'assets': 'animations/getstared3.json',
     },
     {
       'title': 'Task List',
       'description':
-          'Users can create a task list to keep track of their tasks and to-dos.',
+          'You can create a task list to keep track of your tasks and to-dos.',
       'assets': 'animations/getstared2.json',
     },
     {
       'title': 'Drawing',
       'description':
-          'Users can draw and take notes on the same screen to make their notes more visual.',
+          'You can draw and take notes on the same screen to make your notes more visual.',
       'assets': 'animations/getstarted3.json',
     },
     {
       'title': 'Image',
       'description':
-          'Users can add images to their notes to make their notes more visual.',
+          'You can add images to your notes to make your notes more visual.',
       'assets': 'animations/image.json',
     },
     {
       'title': 'Editing',
       'description':
-          'Users can edit their notes, tasks, and drawings to make them more organized.',
+          'You can edit your notes, tasks, and drawings to make them more organized.',
       'assets': 'animations/edit.json',
     },
     {

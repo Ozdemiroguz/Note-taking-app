@@ -1,20 +1,20 @@
 import 'dart:math';
 
-import 'package:firstvisual/models/folder.dart';
-import 'package:firstvisual/screens/drawingPage/drawing_app.dart';
-import 'package:firstvisual/screens/homeScreen/widget.dart';
-import 'package:firstvisual/models/note.dart';
-import 'package:firstvisual/services/ImageService.dart';
-import 'package:firstvisual/services/note_sqlite_services.dart';
+import 'package:firstvisual/features/data/models/folder.dart';
+import 'package:firstvisual/features/data/models/queto.dart';
+import 'package:firstvisual/features/presentation/screens/drawingPage/drawing_app.dart';
+import 'package:firstvisual/features/presentation/screens/homeScreen/widget.dart';
+import 'package:firstvisual/features/data/models/note.dart';
+import 'package:firstvisual/features/data/services/ImageService.dart';
+import 'package:firstvisual/features/data/services/note_sqlite_services.dart';
 import 'package:firstvisual/styles/colors.dart';
+import 'package:firstvisual/styles/dateFormat.dart';
 import 'package:firstvisual/styles/shape.dart';
 import 'package:firstvisual/testScreen/notesavescreen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:freestyle_speed_dial/freestyle_speed_dial.dart';
-import 'package:firstvisual/screens/homeScreen/taskcontainerlist.dart';
+import 'package:firstvisual/features/presentation/screens/homeScreen/taskcontainerlist.dart';
 import 'package:lottie/lottie.dart';
 
 import '../noteScreen/note_screen.dart';
@@ -29,6 +29,9 @@ class HomeScreen extends StatefulWidget {
 
 String? imgPath;
 String? queto = 'Today is a brand new day to achieve something.';
+Quote quote = Quote(
+    author: "CuttieRabbit",
+    quote: "Today is a brand new day to achieve something.");
 
 DetailedNote defaultNote = DetailedNote(-1, 'Type', 1, "", "", DateTime.now(),
     DateTime.now().add(const Duration(days: 2)), [], [], '');
@@ -40,11 +43,82 @@ class _HomeScreenState extends State<HomeScreen> {
   List<DetailedNote> filteredNotes = [];
   List<Folder> folders = [];
   String selectedFolder = "All Notes";
+  List<String> categories = [
+    "age",
+    "alone",
+    "amazing",
+    "anger",
+    "architecture",
+    "art",
+    "attitude",
+    "beauty",
+    "best",
+    "birthday",
+    "business",
+    "car",
+    "change",
+    "communication",
+    "computers",
+    "cool",
+    "courage",
+    "dad",
+    "dating",
+    "death",
+    "design",
+    "dreams",
+    "education",
+    "environmental",
+    "equality",
+    "experience",
+    "failure",
+    "faith",
+    "family",
+    "famous",
+    "fear",
+    "fitness",
+    "food",
+    "forgiveness",
+    "freedom",
+    "friendship",
+    "funny",
+    "future",
+    "god",
+    "good",
+    "government",
+    "graduation",
+    "great",
+    "happiness",
+    "health",
+    "history",
+    "home",
+    "hope",
+    "humor",
+    "imagination",
+    "inspirational",
+    "intelligence",
+    "jealousy",
+    "knowledge",
+    "leadership",
+    "learning",
+    "legal",
+    "life",
+    "love",
+    "marriage",
+    "medical",
+    "men",
+    "mom",
+    "money",
+    "morning",
+    "movies",
+    "success"
+  ];
+  String dropdownValue = 'learning';
 
   @override
   void initState() {
     super.initState();
     _refreshNotes();
+    fetchQuote();
   }
 
   void _refreshNotes() async {
@@ -60,6 +134,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
       notes = freshNotes.reversed.toList();
       filteredNotes = notes;
+    });
+  }
+
+  final quoteService = QuoteService();
+
+  void fetchQuote() {
+    quoteService.fetchQuote(dropdownValue).then((value) {
+      setState(() {
+        quote = value;
+        print("quote: " + quote.quote + quote.author);
+      });
     });
   }
 
@@ -174,23 +259,20 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             itemBuilder: (BuildContext context, int index) {
                               return Stack(children: [
-                                TaskContainerList(note: filteredNotes[index]),
-                                Positioned(
-                                    top: 0,
-                                    right: 0,
-                                    child: GestureDetector(
-                                        child: buildLastRow(),
-                                        onTap: () async {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => NoteScreen(
-                                                  note: notes[index]),
-                                            ),
-                                          ).then((value) {
-                                            _refreshNotes();
-                                          });
-                                        })),
+                                GestureDetector(
+                                    child: TaskContainerList(
+                                        note: filteredNotes[index]),
+                                    onTap: () async {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => NoteScreen(
+                                              note: filteredNotes[index]),
+                                        ),
+                                      ).then((value) {
+                                        _refreshNotes();
+                                      });
+                                    }),
                                 Positioned(
                                     bottom: 2,
                                     right: 2,
@@ -211,7 +293,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                           style: TextStyle(fontSize: 12),
                                         ),
                                       ),
-                                    ))
+                                    )),
+                                Positioned(
+                                  left: 5,
+                                  bottom: 10,
+                                  child: Text(
+                                    format3(filteredNotes[index].date),
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                )
                               ]);
                             },
                           );
@@ -643,5 +735,89 @@ class _HomeScreenState extends State<HomeScreen> {
       filteredNotes =
           await notes.where((note) => note.fileName == folderName).toList();
     }
+  }
+
+  Widget quetoContainer(BuildContext context, String? queto) {
+    return Container(
+        width: getWidth(context) * 0.9,
+        //queto container
+        decoration: BoxDecoration(
+          color: AppColors.softBack,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+                right: 15,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.refresh,
+                    size: 20,
+                  ),
+                  color: Colors.white,
+                  onPressed: () {
+                    fetchQuote();
+                  },
+                )),
+            Positioned(
+              top: 0,
+              left: 15,
+              child: DropdownButton<String>(
+                value: dropdownValue,
+                dropdownColor: AppColors.softBack,
+                icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+                iconSize: 24,
+                underline: Container(
+                  height: 0,
+                  color: AppColors.softBack,
+                ),
+                style: const TextStyle(color: Colors.white),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    dropdownValue = newValue!;
+                    fetchQuote();
+                  });
+                },
+                items: categories.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value.toUpperCase()),
+                  );
+                }).toList(),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "“",
+                    style: TextStyle(
+                        fontSize: 30,
+                        height: 1,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(quote.quote,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          height: 1.2,
+                          fontSize: 12,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold)),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text(quote.author,
+                        style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ));
   }
 } /*  */

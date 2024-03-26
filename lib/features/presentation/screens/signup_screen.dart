@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firstvisual/services/auth_services.dart';
+import 'package:firstvisual/features/data/services/auth_services.dart';
 
 class SignupScreen extends StatelessWidget {
   final AuthService authService = AuthService();
