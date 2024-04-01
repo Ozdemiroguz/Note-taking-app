@@ -10,6 +10,7 @@ import 'package:firstvisual/features/data/services/note_sqlite_services.dart';
 import 'package:firstvisual/styles/colors.dart';
 import 'package:firstvisual/styles/dateFormat.dart';
 import 'package:firstvisual/styles/shape.dart';
+import 'package:firstvisual/testScreen/geminiTestScreen.dart';
 import 'package:firstvisual/testScreen/notesavescreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -153,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
     TextEditingController searchController = TextEditingController();
 
     return Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Padding(
           padding: EdgeInsets.only(bottom: 10),
           child: speedDialer(),
@@ -632,6 +633,28 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget floatingActionButtonAi() {
+    return SizedBox(
+      width: 50,
+      height: 50,
+      child: FloatingActionButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
+        onPressed: () async {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GeminiTestScreen(),
+            ),
+          );
+        },
+        child: const Icon(Icons.note_add, size: 20, color: Colors.white),
+        backgroundColor: AppColors.softBack,
+      ),
+    );
+  }
+
   Widget speedDialer() {
     return SpeedDialBuilder(
       buttonAnchor: Alignment.center,
@@ -647,7 +670,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onPressed: toggle,
           child: AnimatedRotation(
             duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOutCubicEmphasized,
+            curve: Curves.easeInOutCirc,
             turns: isActive ? 0.125 : 0,
             child: const Icon(
               Icons.add,
@@ -658,9 +681,9 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       itemBuilder: (context, Widget item, i, animation) {
         // radius in relative units to each item
-        const radius = 1.5;
+        const radius = 1.35;
         // angle in radians
-        final angle = i * (pi / 4) + pi;
+        final angle = i * (pi / 3) + pi;
 
         final targetOffset = Offset(
           radius * cos(angle),
@@ -684,6 +707,7 @@ class _HomeScreenState extends State<HomeScreen> {
         floatingActionButtonCamera(),
         floatingActionButtonAddnote(),
         floatingActionButtonAddDraw(),
+        floatingActionButtonAi(),
       ],
     );
   }

@@ -48,6 +48,7 @@ dependencies:
   sqflite: ^2.3.2
   smooth_page_indicator: ^1.1.0 
   flutter_dotenv: ^5.1.0
+  flutter_gemini: ^2.0.3
 
 dev_dependencies:
   flutter_test:
