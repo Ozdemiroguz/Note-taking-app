@@ -155,10 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: Padding(
-          padding: EdgeInsets.only(bottom: 10),
-          child: speedDialer(),
-        ),
+        floatingActionButton: speedDialer(),
         endDrawer: drawerFunc(context, notes.length),
         appBar: appBar(context),
         body: _buildBody());
@@ -476,8 +473,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget floatingActionButtonCamera() {
     return SizedBox(
-      width: 50,
-      height: 50,
+      width: 60,
+      height: 60,
       child: FloatingActionButton(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
@@ -557,8 +554,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget floatingActionButtonAddnote() {
     return SizedBox(
-      width: 50,
-      height: 50,
+      width: 60,
+      height: 60,
       child: FloatingActionButton(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
@@ -581,8 +578,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget floatingActionButtonAddDraw() {
     return SizedBox(
-        width: 50,
-        height: 50,
+        width: 60,
+        height: 60,
         child: FloatingActionButton(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(100),
@@ -613,8 +610,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget floatingActionButtonTestScreen() {
     return SizedBox(
-      width: 50,
-      height: 50,
+      width: 60,
+      height: 60,
       child: FloatingActionButton(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
@@ -635,8 +632,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget floatingActionButtonAi() {
     return SizedBox(
-      width: 50,
-      height: 50,
+      width: 60,
+      height: 60,
       child: FloatingActionButton(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
@@ -681,7 +678,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       itemBuilder: (context, Widget item, i, animation) {
         // radius in relative units to each item
-        const radius = 1.35;
+        const radius = 1.3;
         // angle in radians
         final angle = i * (pi / 3) + pi;
 
